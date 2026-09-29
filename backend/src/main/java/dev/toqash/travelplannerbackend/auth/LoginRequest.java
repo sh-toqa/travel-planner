@@ -1,4 +1,4 @@
-package dev.toqash.travelplannerbackend.auth.dto;
+package dev.toqash.travelplannerbackend.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,6 +1,5 @@
 package dev.toqash.travelplannerbackend.auth;
 
-import dev.toqash.travelplannerbackend.auth.dto.LoginRequest;
 import dev.toqash.travelplannerbackend.user.User;
 import dev.toqash.travelplannerbackend.user.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,4 +1,4 @@
-package dev.toqash.travelplannerbackend.security;
+package dev.toqash.travelplannerbackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;

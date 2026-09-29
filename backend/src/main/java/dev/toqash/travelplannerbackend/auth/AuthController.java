@@ -1,6 +1,5 @@
 package dev.toqash.travelplannerbackend.auth;
 
-import dev.toqash.travelplannerbackend.auth.dto.LoginRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

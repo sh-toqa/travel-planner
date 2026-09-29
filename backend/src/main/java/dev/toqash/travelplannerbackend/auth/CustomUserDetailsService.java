@@ -1,4 +1,4 @@
-package dev.toqash.travelplannerbackend.security;
+package dev.toqash.travelplannerbackend.auth;
 
 import dev.toqash.travelplannerbackend.user.User;
 import dev.toqash.travelplannerbackend.user.UserRepository;
