@@ -1,6 +1,7 @@
 package dev.toqash.travelplannerbackend.config;
 
 import dev.toqash.travelplannerbackend.auth.EmailAlreadyUsedException;
+import dev.toqash.travelplannerbackend.itinerary.ItineraryNotFoundException;
 import dev.toqash.travelplannerbackend.trip.TripNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problem(HttpStatus.CONFLICT,
                 "The resource was changed by another request. Reload it and try again.",
                 ErrorCode.VERSION_CONFLICT);
+    }
+
+    @ExceptionHandler(ItineraryNotFoundException.class)
+    public ProblemDetail handleItineraryNotFound(ItineraryNotFoundException ex) {
+        return problem(HttpStatus.NOT_FOUND, ex.getMessage(), ErrorCode.ITINERARY_NOT_FOUND);
     }
 
     private ProblemDetail problem(HttpStatus status, String detail, ErrorCode code) {
