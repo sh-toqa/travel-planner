@@ -1,6 +1,7 @@
 package dev.toqash.travelplannerbackend.config;
 
 import dev.toqash.travelplannerbackend.auth.EmailAlreadyUsedException;
+import dev.toqash.travelplannerbackend.trip.TripNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,6 +57,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         // Full details go to the log only; the client gets a generic message.
         log.error("Unexpected error", ex);
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", ErrorCode.INTERNAL_ERROR);
+    }
+
+    @ExceptionHandler(TripNotFoundException.class)
+    public ProblemDetail handleTripNotFound(TripNotFoundException ex) {
+        return problem(HttpStatus.NOT_FOUND, ex.getMessage(), ErrorCode.TRIP_NOT_FOUND);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ProblemDetail handleVersionConflict(ObjectOptimisticLockingFailureException ex) {
+        return problem(HttpStatus.CONFLICT,
+                "The resource was changed by another request. Reload it and try again.",
+                ErrorCode.VERSION_CONFLICT);
     }
 
     private ProblemDetail problem(HttpStatus status, String detail, ErrorCode code) {
