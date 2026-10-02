@@ -12,3 +12,5 @@ All vibes, most important first: {vibes}
 Must see, do or eat: {mustSee}
 Special requirements: {specialRequirements}
 </preferences>
+
+{corrections}

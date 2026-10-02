@@ -42,18 +42,20 @@ public record PlanningContext(
     }
 
     // Keys match the {placeholders} in prompts/itinerary-user.st.
-    public Map<String, Object> asTemplateParams() {
-        return Map.of(
-                "destination", destination,
-                "numberOfDays", numberOfDays,
-                "dayList", dayList,
-                "budgetLevel", budgetLevel,
-                "pace", pace,
-                "activitiesPerDay", activitiesPerDay,
-                "primaryVibe", primaryVibe,
-                "vibes", vibes,
-                "mustSee", mustSee,
-                "specialRequirements", specialRequirements
+    // corrections is empty on the first attempt and lists the problems on the repair attempt.
+    public Map<String, Object> asTemplateParams(String corrections) {
+        return Map.ofEntries(
+                Map.entry("corrections", corrections),
+                Map.entry("destination", destination),
+                Map.entry("numberOfDays", numberOfDays),
+                Map.entry("dayList", dayList),
+                Map.entry("budgetLevel", budgetLevel),
+                Map.entry("pace", pace),
+                Map.entry("activitiesPerDay", activitiesPerDay),
+                Map.entry("primaryVibe", primaryVibe),
+                Map.entry("vibes", vibes),
+                Map.entry("mustSee", mustSee),
+                Map.entry("specialRequirements", specialRequirements)
         );
     }
 
