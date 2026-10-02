@@ -1,13 +1,11 @@
 package dev.toqash.travelplannerbackend;
 
+import dev.toqash.travelplannerbackend.support.IntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TravelPlannerBackendApplicationTests {
+class TravelPlannerBackendApplicationTests extends IntegrationTest {
 
     @Test
     void contextLoads() {
     }
-
 }
