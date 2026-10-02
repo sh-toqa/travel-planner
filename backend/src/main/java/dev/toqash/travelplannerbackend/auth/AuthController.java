@@ -1,10 +1,9 @@
 package dev.toqash.travelplannerbackend.auth;
 
+import dev.toqash.travelplannerbackend.user.UserResponse;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -18,4 +17,9 @@ public class AuthController {
     public void login(@Valid @RequestBody LoginRequest request){
         authService.login(request);
     }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse register(@Valid @RequestBody RegisterRequest request){
+        return authService.register(request); }
 }
