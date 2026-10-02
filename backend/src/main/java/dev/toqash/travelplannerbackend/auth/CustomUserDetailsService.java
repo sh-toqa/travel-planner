@@ -1,5 +1,6 @@
 package dev.toqash.travelplannerbackend.auth;
 
+import dev.toqash.travelplannerbackend.user.EmailNormalizer;
 import dev.toqash.travelplannerbackend.user.User;
 import dev.toqash.travelplannerbackend.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("Email not found"));
+        User user = userRepository.findByEmail(EmailNormalizer.normalize(email)).orElseThrow(()->new UsernameNotFoundException("Email not found"));
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())

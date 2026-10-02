@@ -1,5 +1,6 @@
 package dev.toqash.travelplannerbackend.auth;
 
+import dev.toqash.travelplannerbackend.user.EmailNormalizer;
 import dev.toqash.travelplannerbackend.user.User;
 import dev.toqash.travelplannerbackend.user.UserRepository;
 import dev.toqash.travelplannerbackend.user.UserResponse;
@@ -9,8 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Locale;
 
 @Service
 public class AuthService {
@@ -27,7 +26,7 @@ public class AuthService {
     public void login(LoginRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        normalizeEmail(request.email()),
+                        EmailNormalizer.normalize(request.email()),
                         request.password()
                 )
         );
@@ -35,7 +34,7 @@ public class AuthService {
 
     @Transactional
     public UserResponse register(RegisterRequest request){
-        String email = normalizeEmail(request.email());
+        String email = EmailNormalizer.normalize(request.email());
         String displayName = normalizeDisplayName(request.displayName());
 
         if(userRepository.existsByEmail(email)){
@@ -56,10 +55,6 @@ public class AuthService {
             throw new EmailAlreadyUsedException();
         }
         return UserResponse.from(saved);
-    }
-
-    private String normalizeEmail(String email){
-        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     private String normalizeDisplayName(String displayName){
