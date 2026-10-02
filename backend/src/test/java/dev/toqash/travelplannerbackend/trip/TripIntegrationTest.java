@@ -112,6 +112,16 @@ class TripIntegrationTest extends IntegrationTest {
                 .andReturn().getResponse().getHeader("Location");
     }
 
+    @Test
+    void rejectsUnknownSortProperty() throws Exception {
+        String owner = registerUser();
+
+        mockMvc.perform(get("/trips").param("sort", "nonsense").with(as(owner)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+                .andExpect(jsonPath("$.detail").value("Unknown sort property: nonsense"));
+    }
+
     private static String tripJson(String destination, LocalDate start, LocalDate end, Long version) {
         return """
                 {"destination": "%s", "startDate": "%s", "endDate": "%s", "vibes": ["FOOD"], "version": %s}
