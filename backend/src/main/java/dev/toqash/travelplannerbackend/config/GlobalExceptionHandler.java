@@ -1,6 +1,7 @@
 package dev.toqash.travelplannerbackend.config;
 
 import dev.toqash.travelplannerbackend.auth.EmailAlreadyUsedException;
+import dev.toqash.travelplannerbackend.common.InvalidSortException;
 import dev.toqash.travelplannerbackend.itinerary.ItineraryNotFoundException;
 import dev.toqash.travelplannerbackend.planner.AiOutputInvalidException;
 import dev.toqash.travelplannerbackend.planner.AiUnavailableException;
@@ -9,6 +10,7 @@ import dev.toqash.travelplannerbackend.planner.GenerationJobNotFoundException;
 import dev.toqash.travelplannerbackend.trip.TripNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -106,6 +108,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(GenerationJobNotFoundException.class)
     public ProblemDetail handleJobNotFound(GenerationJobNotFoundException ex) {
         return problem(HttpStatus.NOT_FOUND, ex.getMessage(), ErrorCode.JOB_NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidSortException.class)
+    public ProblemDetail handleInvalidSort(InvalidSortException ex) {
+        return problem(HttpStatus.BAD_REQUEST, ex.getMessage(), ErrorCode.VALIDATION_FAILED);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ProblemDetail handleUnknownSortProperty(PropertyReferenceException ex) {
+        return problem(HttpStatus.BAD_REQUEST, "Unknown sort property: " + ex.getPropertyName(), ErrorCode.VALIDATION_FAILED);
     }
 
     private ProblemDetail problem(HttpStatus status, String detail, ErrorCode code) {
