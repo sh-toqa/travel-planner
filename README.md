@@ -1,5 +1,7 @@
 # Travel Planner
 
+[![Backend CI](https://github.com/sh-toqa/travel-planner/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/sh-toqa/travel-planner/actions/workflows/backend-ci.yml)
+
 A Spring Boot backend that turns trip preferences into a **validated, day-by-day itinerary generated with AI**.
 The model is treated like any other unreliable external service: its output is parsed into typed records,
 checked against business rules, repaired once if needed, and generated in the background with bounded retries.
