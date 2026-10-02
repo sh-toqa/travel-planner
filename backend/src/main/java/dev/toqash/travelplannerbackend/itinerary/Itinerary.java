@@ -3,7 +3,9 @@ package dev.toqash.travelplannerbackend.itinerary;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,6 +37,12 @@ public class Itinerary {
     @Column(nullable = false, length = 20)
     @Builder.Default
     private ItineraryStatus status = ItineraryStatus.CURRENT;
+
+    // Non-blocking validation findings, stored as a Postgres text[].
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(nullable = false, columnDefinition = "text[]")
+    @Builder.Default
+    private List<String> warnings = new ArrayList<>();
 
     // Days are part of the itinerary: saved, replaced and deleted together with it.
     @OneToMany(mappedBy = "itinerary", cascade = CascadeType.ALL, orphanRemoval = true)

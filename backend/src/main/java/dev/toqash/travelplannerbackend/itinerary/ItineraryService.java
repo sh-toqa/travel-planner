@@ -23,4 +23,15 @@ public class ItineraryService {
                 .map(ItineraryResponse::from)
                 .orElseThrow(ItineraryNotFoundException::new);
     }
+
+    // Replaces the trip's itinerary in one transaction: either the old one stays, or the new one is fully saved.
+    @Transactional
+    public ItineraryResponse replaceForTrip(UUID tripId, Itinerary newItinerary) {
+        itineraryRepository.findByTripId(tripId).ifPresent(existing -> {
+            itineraryRepository.delete(existing);
+            // Flush the delete first: one itinerary per trip is a unique constraint.
+            itineraryRepository.flush();
+        });
+        return ItineraryResponse.from(itineraryRepository.saveAndFlush(newItinerary));
+    }
 }
