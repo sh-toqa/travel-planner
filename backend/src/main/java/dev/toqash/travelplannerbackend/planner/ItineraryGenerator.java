@@ -1,6 +1,7 @@
 package dev.toqash.travelplannerbackend.planner;
 
 import com.google.genai.errors.ApiException;
+import com.google.genai.errors.GenAiIOException;
 import dev.toqash.travelplannerbackend.itinerary.Activity;
 import dev.toqash.travelplannerbackend.itinerary.ActivitySource;
 import dev.toqash.travelplannerbackend.itinerary.Itinerary;
@@ -49,8 +50,10 @@ public class ItineraryGenerator {
     }
 
     // Deliberately not @Transactional: the model calls take seconds and must not hold a database connection.
-    public ItineraryResponse generate(UUID tripId) {
-        TripResponse trip = tripService.get(tripId); // ownership check
+    public ItineraryResponse generate(TripResponse trip) {
+        // The caller has already checked ownership and loaded the trip; this runs on a background thread.
+        // Deliberately not @Transactional: the model calls take seconds and must not hold a database connection.
+        UUID tripId = trip.id();
         PlanningContext context = PlanningContext.from(trip);
 
         ItineraryDraft draft = requestDraft(context, "");
@@ -78,8 +81,8 @@ public class ItineraryGenerator {
                     .call()
                     .entity(ItineraryDraft.class);
         } catch (RuntimeException e) {
-            if (hasCause(e, ApiException.class)) {
-                throw new AiUnavailableException(e); // Gemini errors: overload (503), rate limit (429), ...
+            if (hasCause(e, ApiException.class) || hasCause(e, GenAiIOException.class)) {
+                throw new AiUnavailableException(e);
             }
             if (hasCause(e, JacksonException.class)) {
                 log.warn("Model reply was not valid itinerary JSON: {}", e.getMessage());

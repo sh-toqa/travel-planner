@@ -1,7 +1,7 @@
 package dev.toqash.travelplannerbackend.planner;
 
-import dev.toqash.travelplannerbackend.itinerary.ItineraryResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,20 +12,25 @@ import java.util.UUID;
 
 @RestController
 public class ItineraryGenerationController {
-    private final ItineraryGenerator itineraryGenerator;
+    private final GenerationJobService jobService;
 
-    public ItineraryGenerationController(ItineraryGenerator itineraryGenerator) {
-        this.itineraryGenerator = itineraryGenerator;
+    public ItineraryGenerationController(GenerationJobService jobService) {
+        this.jobService = jobService;
     }
 
-    // Synchronous for now: the request waits for the model.
+    // 202 Accepted: the work has started; poll the Location until the job is SUCCEEDED or FAILED.
     @PostMapping("/trips/{tripId}/itinerary/generate")
-    public ResponseEntity<ItineraryResponse> generate(@PathVariable UUID tripId) {
-        ItineraryResponse itinerary = itineraryGenerator.generate(tripId);
+    public ResponseEntity<GenerationJobResponse> generate(@PathVariable UUID tripId) {
+        GenerationJobResponse job = jobService.start(tripId);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/trips/{tripId}/itinerary")
-                .buildAndExpand(tripId)
+                .path("/generation-jobs/{jobId}")
+                .buildAndExpand(job.id())
                 .toUri();
-        return ResponseEntity.created(location).body(itinerary);
+        return ResponseEntity.accepted().location(location).body(job);
+    }
+
+    @GetMapping("/generation-jobs/{jobId}")
+    public GenerationJobResponse getJob(@PathVariable UUID jobId) {
+        return jobService.get(jobId);
     }
 }
