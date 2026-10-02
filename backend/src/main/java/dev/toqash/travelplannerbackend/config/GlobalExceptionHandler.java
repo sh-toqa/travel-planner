@@ -4,6 +4,8 @@ import dev.toqash.travelplannerbackend.auth.EmailAlreadyUsedException;
 import dev.toqash.travelplannerbackend.itinerary.ItineraryNotFoundException;
 import dev.toqash.travelplannerbackend.planner.AiOutputInvalidException;
 import dev.toqash.travelplannerbackend.planner.AiUnavailableException;
+import dev.toqash.travelplannerbackend.planner.GenerationInProgressException;
+import dev.toqash.travelplannerbackend.planner.GenerationJobNotFoundException;
 import dev.toqash.travelplannerbackend.trip.TripNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail body = problem(HttpStatus.UNPROCESSABLE_CONTENT, ex.getMessage(), ErrorCode.AI_OUTPUT_INVALID);
         body.setProperty("errors", ex.getErrors());
         return body;
+    }
+
+    @ExceptionHandler(GenerationInProgressException.class)
+    public ProblemDetail handleGenerationInProgress(GenerationInProgressException ex) {
+        ProblemDetail body = problem(HttpStatus.CONFLICT, ex.getMessage(), ErrorCode.GENERATION_IN_PROGRESS);
+        body.setProperty("activeJobId", ex.getActiveJobId());
+        return body;
+    }
+
+    @ExceptionHandler(GenerationJobNotFoundException.class)
+    public ProblemDetail handleJobNotFound(GenerationJobNotFoundException ex) {
+        return problem(HttpStatus.NOT_FOUND, ex.getMessage(), ErrorCode.JOB_NOT_FOUND);
     }
 
     private ProblemDetail problem(HttpStatus status, String detail, ErrorCode code) {
